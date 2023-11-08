@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import os 
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure--h&a3wym%rlst@q&7qzxr-v5ap3^$hb8l3v#xv)@ecnb-qe_8#'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -37,8 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'home.apps.HomeConfig',
     'accounts.apps.AccountsConfig',
+    'home.apps.HomeConfig',
     'storages',
 ]
 
@@ -137,15 +140,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'accounts.User'
 
 
-'''# Arvan cloud storage
+'''idk if this is the right way or not! so i keep it as comment.
+# Arvan cloud storage
 STORAGES = {
     "default": {
         "BACKEND": "storages.backends.s3.S3Storage",
         "OPTIONS": {
-            "bucket_name": "my-django-shop-amir",
-            "access_key": "fe72e06d-e228-4a2d-9c54-4f1d3bde8fd5",
-            "secret_key": "8cdb86687f3c7f8ca5093720e634f228e8692481b34880e82ebdb314ffe1a28f",
-            "endpoint_url": "https://shop-shop1.s3.ir-thr-at1.arvanstorage.ir",
+            "bucket_name": "",
+            "access_key": "",
+            "secret_key": "",
+            "endpoint_url": "",
             "file_overwrite": False,
             "querystring_auth": False,
         },
@@ -157,15 +161,13 @@ STORAGES = {
 '''
 
 
-
-# ARVAN CLOUD STORAGE
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-AWS_ACCESS_KEY_ID = 'fe72e06d-e228-4a2d-9c54-4f1d3bde8fd5'
-AWS_SECRET_ACCESS_KEY = '8cdb86687f3c7f8ca5093720e634f228e8692481b34880e82ebdb314ffe1a28f'
-AWS_QUERYSTRING_AUTH = False
-AWS_S3_ENDPOINT_URL = 'https://shop1-project.s3.ir-thr-at1.arvanstorage.ir'
-AWS_STORAGE_BUCKET_NAME = 'shop1-project'
-AWS_SERVICE_NAME = 's3'
-AWS_S3_FILE_OVERWRITE = False
-AWS_LOCAL_STORAGE = f'{BASE_DIR}/aws/'
-
+# liara setting storage for django >= 4.2
+STORAGES = {"default": {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+                        "OPTIONS": {"bucket_name": "shop-bucket"},},
+                        "staticfiles": {
+                            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",},
+            }
+AWS_S3_ENDPOINT_URL = os.getenv("LIARA_ENDPOINT")
+AWS_S3_ACCESS_KEY_ID = os.getenv("LIARA_ACCESS_KEY")
+AWS_S3_SECRET_ACCESS_KEY = os.getenv("LIARA_SECRET_KEY")
+AWS_STORAGE_BUCKET_NAME = os.getenv("LIARA_BUCKET_NAME")
